@@ -1,25 +1,51 @@
 import { Rating } from '../models/ratings.models.ts';
 import { RatingRepository } from '../repositories/ratings.repository.ts';
+import { RatingDTO } from '../dtos/rating.dto.ts';
+
 export class RatingService {
-        private ratingRepository = new RatingRepository();
+  private ratingRepository = new RatingRepository();
 
-    getAllRatings() {
-        return this.ratingRepository.getAllRatings();
-    }
+  // Convertir un Rating en RatingDTO
+  toDTO(rate: rating): RatingDTO {
+    return {
+      id: rate.id,
+      rating: rate.rating,
+      comment: rate.comment,
+      movieId: rate.movieId,
+    };
+  }
 
-    getRatingById(id: number) {
-        return this.ratingRepository.getRatingById(id);
-    }
+  // Convertir un RatingDTO en Rating
+  toModel(dto: RatingDTO): rating {
+    return {
+      id: dto.id,
+      rating: dto.rating,
+      comment: dto.comment,
+      movieId: dto.movieId,
+    };
+  }
 
-    createRating(ratingData: any) {
-        return this.ratingRepository.createRating(ratingData);
-    }
+  getAllRatings() {
+    const ratings = this.ratingRepository.getAllRatings();
+    return ratings.map(this.toDTO);
+  }
 
-    updateRating(id: number, ratingData: any) {
-        return this.ratingRepository.updateRating(id, ratingData);
-    }
+  getRatingById(id: number) {
+    const rate = this.ratingRepository.getRatingById(id);
+    return rate ? this.toDTO(rate) : null;
+  }
 
-    deleteRating(id: number) {
-        return this.ratingRepository.deleteRating(id);
-    }
+  createRating(ratingData: RatingDTO) {
+    const rate = this.toModel(ratingData);
+    return this.ratingRepository.createRating(rate);
+  }
+
+  updateRating(id: number, ratingData: RatingDTO) {
+    const rate = this.toModel(ratingData);
+    return this.ratingRepository.updateRating(id, rate);
+  }
+
+  deleteRating(id: number) {
+    return this.ratingRepository.deleteRating(id);
+  }
 }
