@@ -42,7 +42,7 @@ export class MoviesRepository {
           return movie;
       }
   
-      createRating(newMovie: Movie): Movie | null{
+      createMovie(newMovie: Movie): Movie | null{
         newMovie.id = this.movies.length ? this.movies[this.movies.length - 1].id + 1 : 1;
           const movie = this.movies.push(newMovie);
           if (movie === undefined) {
@@ -51,7 +51,7 @@ export class MoviesRepository {
           return newMovie;
       }
   
-      updateRating(id: number, updateMovie: Movie): Movie | null {
+      updateMovie(id: number, updateMovie: Movie): Movie | null {
           var movie = this.movies.find((movie) => movie.id === id);
           if (movie === undefined) {
               return null;
@@ -60,7 +60,7 @@ export class MoviesRepository {
           return movie;
       }
 
-      deleteRating(id: number): Movie | null {
+      deleteMovie(id: number): Movie | null {
           const movie = this.movies.findIndex((movie) => movie.id === id);
           if (movie === undefined) {
               return null;
