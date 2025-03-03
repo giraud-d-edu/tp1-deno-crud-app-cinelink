@@ -14,7 +14,7 @@ export class RatingRepository {
         return this.ratings;
     };
 
-    getById(id: number): rating | null {
+    getMovieById(id: number): rating | null {
         const rate = this.ratings.find((rating) => rating.id === id);
         if (rate === undefined) {
             return null;

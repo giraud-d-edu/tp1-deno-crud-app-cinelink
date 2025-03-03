@@ -29,4 +29,42 @@ export class MoviesRepository {
       ],
     },
   ];
+
+      getAllMovies(): Movie[] {
+          return this.movies;
+      };
+  
+      getMovieById(id: number): Movie | null {
+          const movie = this.movies.find((movie) => movie.id === id);
+          if (movie === undefined) {
+              return null;
+          }
+          return movie;
+      }
+  
+      createRating(newMovie: Movie): Movie | null{
+        newMovie.id = this.movies.length ? this.movies[this.movies.length - 1].id + 1 : 1;
+          const movie = this.movies.push(newMovie);
+          if (movie === undefined) {
+              return null;
+          }
+          return newMovie;
+      }
+  
+      updateRating(id: number, updateMovie: Movie): Movie | null {
+          var movie = this.movies.find((movie) => movie.id === id);
+          if (movie === undefined) {
+              return null;
+          }
+          movie = updateMovie;
+          return movie;
+      }
+
+      deleteRating(id: number): Movie | null {
+          const movie = this.movies.findIndex((movie) => movie.id === id);
+          if (movie === undefined) {
+              return null;
+          }
+          return this.movies.splice(movie, 1)[0];
+      }
 }
