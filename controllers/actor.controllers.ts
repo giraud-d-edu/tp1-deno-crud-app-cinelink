@@ -1,61 +1,92 @@
-import {ActorService} from '../services/actor.service';
-
+import {ActorService} from '../services/actor.services.ts';
 const actorService = new ActorService();
 
 
 export class ActorController {
 
     static getAllActors(ctx: Context) {
-        try {
-            const actors = actorService.getAllActors();
-            ctx.response.status = 200;
-            ctx.body = actors;
-        } catch (error) {
-            ctx.response.status = 500;
-            ctx.body = error.message;
-        }
+        ctx.response.body = actorService.getAllActors();
     }
 
     static getActorById(ctx: Context) {
-        try {
-            const actor = actorService.getActorById(Number(ctx.params.id));
+            const id = Number(ctx.params.id);
+            if (isNaN(id)) {
+                ctx.response.status = 400;
+                ctx.response.body = { message: "ID invalide" };
+                return;
+              }
+            const actor = actorService.getActorById(id);
+            if (!actor) {
+                ctx.response.status = 404;
+                ctx.response.body = { message: "Actor not found" };
+                return;
+            }
             ctx.response.status = 200;
-            ctx.body = actor;
-        } catch (error) {
-            ctx.response.status = 500;
-            ctx.body = error.message;
-        }
+            ctx.response.body = actor;
     }
 
-    static createActor(ctx: Context) {
+    static async createActor(ctx: Context) {
         try {
-            const actor = actorService.createActor(ctx.request.body);
+            const body = await ctx.request.body.json();
+            const actor = actorService.createActor(body);
             ctx.response.status = 201;
-            ctx.body = actor;
+            ctx.response.body = actor;
         } catch (error) {
-            ctx.response.status = 500;
-            ctx.body = error.message;
+            ctx.response.status = 400;
+            ctx.response.body = { message: error.message };
         }
     }
 
-    static updateActor(ctx: Context) {
+    static async updateActor(ctx: Context) {
         try {
-            const actor = actorService.updateActor(Number(ctx.params.id), ctx.request.body);
+            const id = Number(ctx.params.id);
+
+            if (isNaN(id)) {
+                ctx.status = 400;
+                ctx.body = { message: "ID invalide" };
+                return;
+            }
+            const existingActor = actorService.getActorById(id);
+            if (!existingActor) {
+                ctx.response.status = 404;
+                ctx.response.body = { message: "Actor not found" };
+                return;
+            }
+            const body = await ctx.request.body.json();
+            const actor = actorService.updateActor(id, body);
+
+            if (!actor) {
+                ctx.response.status = 404;
+                ctx.response.body = { message: "Actor not found" };
+                return;
+            }
             ctx.response.status = 200;
-            ctx.body = actor;
+            ctx.response.body = actor;
         } catch (error) {
             ctx.response.status = 500;
-            ctx.body = error.message;
+            ctx.response.body = { message: error.message };
         }
     }
 
-    static deleteActor(ctx : Context) {
+    static deleteActor(ctx: Context) {
         try {
-            actorService.deleteActor(Number(ctx.params.id));
-            ctx.response.status = 204;
+            const id = Number(ctx.params.id);
+            if (isNaN(id)) {
+                ctx.response.status = 400;
+                ctx.response.body = { message: "ID invalide" };
+                return;
+            }
+            const deleted = actorService.deleteActor(id);
+            if (!deleted) {
+                ctx.response.status = 404;
+                ctx.response.body = { message: "Actor not found" };
+                return;
+            }
+            ctx.response.status = 200;
+            ctx.response.body = { message: "Actor deleted successfully" };
         } catch (error) {
             ctx.response.status = 500;
-            ctx.body = error.message;
+            ctx.response.body = { message: error.message };
         }
     }
 }
