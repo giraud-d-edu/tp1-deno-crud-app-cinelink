@@ -3,6 +3,7 @@ import { Application, Router} from "https://deno.land/x/oak/mod.ts";
 import { ActorController } from "./controllers/actor.controllers.ts";
 import { MovieController } from "./controllers/movie.controllers.ts";
 import { RatingController } from "./controllers/rating.controllers.ts";
+import { loggingMiddleware } from "./middleware/logging.middleware.ts";
 
 const app = new Application();
 const router = new Router();
@@ -28,6 +29,7 @@ router.delete("/ratings/:id", RatingController.deleteRating);
 
 app.use(router.routes());
 app.use(router.allowedMethods());
+app.use(loggingMiddleware);
 
 console.log("Serveur démarré sur http://localhost:8000");
 await app.listen({ port: 8000 });
