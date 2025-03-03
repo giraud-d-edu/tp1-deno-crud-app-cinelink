@@ -1,21 +1,22 @@
-import { Actor } from "../models/actors.models";
+import { Actor } from "../models/actors.models.ts";
 
-export class actorsRepository {
-  private actors: Actor[] = [
-    {
-      id: 1,
-      name: "Daniel Radcliffe",
-      birthday: "23/07/1989",
-      country: "UK",
-      age: 31,
-    },
-  ];
-  getAllActor(): Actor[] {
-    return this.actors;
+let actors: Actor[] = [
+  {
+    id: 1,
+    name: "Daniel Radcliffe",
+    birthday: "23/07/1989",
+    country: "UK",
+    age: 31,
+  },
+];
+export class ActorRepository {
+
+  getAllActors(): Actor[] {
+    return actors;
   }
 
   getActorById(id: number): Actor | null {
-    const actor = this.actors.find((actor) => actor.id === id);
+    const actor = actors.find((actor) => actor.id === id);
     if (actor === undefined) {
       return null;
     }
@@ -23,10 +24,10 @@ export class actorsRepository {
   }
 
   createActor(newActor: Actor): Actor | null {
-    newActor.id = this.actors.length
-      ? this.actors[this.actors.length - 1].id + 1
+    newActor.id = actors.length
+      ? actors[actors.length - 1].id + 1
       : 1;
-    const movie = this.actors.push(newActor);
+    const movie = actors.push(newActor);
     if (movie === undefined) {
       return null;
     }
@@ -34,7 +35,7 @@ export class actorsRepository {
   }
 
   updateActor(id: number, updateActor: Actor): Actor | null {
-    var actor = this.actors.find((actor) => actor.id === id);
+    var actor = actors.find((actor) => actor.id === id);
     if (actor === undefined) {
       return null;
     }
@@ -43,10 +44,10 @@ export class actorsRepository {
   }
 
   deleteActor(id: number): Actor | null {
-    const actor = this.actors.findIndex((actor) => actor.id === id);
+    const actor = actors.findIndex((actor) => actor.id === id);
     if (actor === undefined) {
       return null;
     }
-    return this.actors.splice(actor, 1)[0];
+    return actors.splice(actor, 1)[0];
   }
 }
