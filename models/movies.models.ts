@@ -6,6 +6,6 @@ export interface Movie {
     title: string;
     year: number;
     synopsis: string;
-    rating: rating[];
+    ratings: rating[];
     actors: Actor[];
 }
