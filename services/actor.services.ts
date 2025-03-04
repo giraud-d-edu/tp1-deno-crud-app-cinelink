@@ -16,19 +16,6 @@ export class ActorService {
     };
   }
 
-  private calculateAge(birthday: string): number {
-    const birthDate = new Date(birthday);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    if (
-      today.getMonth() < birthDate.getMonth() ||
-      (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-    return age;
-  }
-
   getAllActors(): ActorDTO[] {
     const actors = this.actorRepository.getAllActors();
     return actors.map(this.toDTO);
