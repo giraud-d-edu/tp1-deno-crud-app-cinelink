@@ -8,7 +8,7 @@ import { loggingMiddleware } from "./middleware/logging.middleware.ts";
 const app = new Application();
 const router = new Router();
 
-router.get("/actors", ActorController.getAllActors);
+router.get("/actors", ActorController.getAllActors); 
 router.get("/actors/:id", ActorController.getActorById);
 router.post("/actors", ActorController.createActor);
 router.put("/actors/:id", ActorController.updateActor);
