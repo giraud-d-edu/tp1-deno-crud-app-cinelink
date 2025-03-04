@@ -2,6 +2,7 @@ import { MongoClient, ObjectId } from 'https://deno.land/x/mongo@v0.34.0/mod.ts'
 import { ActorDbos } from '../dbos/actor.dbos.ts';
 import {db} from '../db.ts';
 
+
 export class ActorRepository {
   private actorsCollection;
 
@@ -10,48 +11,48 @@ export class ActorRepository {
     const collection = db.getActorsCollection();
     const actorsCursor = await collection.find({});
     const actors = await actorsCursor.toArray();
-    console.log(actors);
     return actors;
   }
 
   // Get an actor by ID
   async getActorById(id: string): Promise<ActorDbos | null> {
     const collection = db.getActorsCollection();
-    const actor = await collection.actorsCollection.findOne({ _id: new ObjectId(id) });
-    return actor ? new ActorDbos(actor) : null;
+    const actor = await collection.findOne({ _id: new ObjectId(id) });
+    const actorDbos = new ActorDbos(actor);
+    return actorDbos;
   }
 
   // Create a new actor
   async createActor(newActor: ActorDbos): Promise<ActorDbos | null> {
     const collection = db.getActorsCollection();
-    const result = await collection.actorsCollection.insertOne(newActor);
-    if (!result.insertedId) {
+    const result = await collection.insertOne(newActor);
+    if (!result) {
       return null;
     }
-    const actor = await collection.actorsCollection.findOne({ _id: result.insertedId });
-    return actor ? new ActorDbos(actor) : null;
+    newActor._id = result;
+    return newActor;
   }
 
   // Update an actor by ID
   async updateActor(id: string, updatedActor: ActorDbos): Promise<ActorDbos | null> {
     const collection = db.getActorsCollection();
-    const result = await collection.actorsCollection.updateOne(
+
+    const { _id, ...actorData } = updatedActor;
+    const result = await collection.updateOne(
       { _id: new ObjectId(id)},
-      { $set: updatedActor }
+      { $set: actorData }
     );
-    if (result.modifiedCount === 0) {
-      return null;
-    }
-    const actor = await collection.actorsCollection.findOne({ _id: new ObjectId(id) });
-    return actor ? new ActorDbos(actor) : null;
+    actorData._id = new ObjectId(id);
+    const actorDbos = new ActorDbos(actorData);
+    return actorDbos;
   }
 
   // Delete an actor by ID
   async deleteActor(id: string): Promise<ActorDbos | null> {
     const collection = db.getActorsCollection();
-    const result = await collection.actorsCollection.deleteOne({ _id: new ObjectId(id) });
+    const result = await collection.deleteOne({ _id: new ObjectId(id) });
     if (result.deletedCount === 0) {
-      return null;
+       throw new Error('Failed to delete actor');
     }
   }
 }
