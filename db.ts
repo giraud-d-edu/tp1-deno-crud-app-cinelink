@@ -1,26 +1,5 @@
 import { MongoClient } from "https://deno.land/x/mongo@v0.34.0/mod.ts";
 
-export interface actor {
-  _id?: { $oid: string };
-  name: string;
-  birthdate: string;
-  nationality: string;
-}
-
-export interface movie {
-  _id?: { $oid: string };
-  title: string;
-  releaseDate: string;
-  genre: string;
-}
-
-export interface rating {
-  _id?: { $oid: string };
-  movieId: string;
-  rating: number;
-  reviewer: string;
-}
-
 class Database {
   private client: MongoClient;
   private db: any;

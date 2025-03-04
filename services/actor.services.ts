@@ -1,6 +1,7 @@
 import { Actor } from "../models/actors.models.ts";
 import { ActorRepository } from "../repositories/actors.repository.ts";
 import { ActorDTO } from "../dtos/actor.dto.ts";
+import { ActorDBO} from "../dbos/actor.dbos.ts";
 
 export class ActorService {
   private actorRepository = new ActorRepository();
@@ -15,10 +16,24 @@ export class ActorService {
       age: actor.age,
     };
   }
+  private toModel(actorDbo: ActorDBO): Actor {
+    return {
+      id: actorDbo._id.toString(),
+      name: actorDbo.name,
+      birthday: actorDbo.birthdate,
+      country: actorDbo.country,
+      age: actorDbo.age,
+    };
+  }
 
-  getAllActors(): ActorDTO[] {
-    const actors = this.actorRepository.getAllActors();
-    return actors.map(this.toDTO);
+    async getAllDTOActors(): ActorDTO[] {
+    const actorsModel = await this.getAllActors();
+    return actorsModel.map(this.toDTO);;
+  }
+
+  async getAllActors(): Actor[] {
+    const actorsDbo = await this.actorRepository.getAllActors();
+    return actorsDbo.map(this.toModel);
   }
 
   getActorById(id: number): ActorDTO | null {

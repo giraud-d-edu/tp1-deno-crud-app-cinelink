@@ -5,8 +5,8 @@ const actorService = new ActorService();
 
 export class ActorController {
 
-    static getAllActors(ctx: Context) {
-        ctx.response.body = actorService.getAllActors();
+    static async  getAllActors(ctx: Context) {
+        ctx.response.body =  await actorService.getAllDTOActors();
     }
 
     static getActorById(ctx: Context) {

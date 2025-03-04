@@ -1,53 +1,57 @@
-import { Actor } from "../models/actors.models.ts";
+import { MongoClient, ObjectId } from 'https://deno.land/x/mongo@v0.34.0/mod.ts';
+import { ActorDbos } from '../dbos/actor.dbos.ts';
+import {db} from '../db.ts';
 
-let actors: Actor[] = [
-  {
-    id: 1,
-    name: "Daniel Radcliffe",
-    birthday:"23/07/1989",
-    country: "UK",
-    age: 31,
-  },
-];
 export class ActorRepository {
+  private actorsCollection;
 
-  getAllActors(): Actor[] {
+  // Get all actors
+  async getAllActors(): Promise<ActorDbos[]> {
+    const collection = db.getActorsCollection();
+    const actorsCursor = await collection.find({});
+    const actors = await actorsCursor.toArray();
+    console.log(actors);
     return actors;
   }
 
-  getActorById(id: number): Actor | null {
-    const actor = actors.find((actor) => actor.id === id);
-    if (actor === undefined) {
-      return null;
-    }
-    return actor;
+  // Get an actor by ID
+  async getActorById(id: string): Promise<ActorDbos | null> {
+    const collection = db.getActorsCollection();
+    const actor = await collection.actorsCollection.findOne({ _id: new ObjectId(id) });
+    return actor ? new ActorDbos(actor) : null;
   }
 
-  createActor(newActor: Actor): Actor | null {
-    newActor.id = actors.length
-      ? actors[actors.length - 1].id + 1
-      : 1;
-    const movie = actors.push(newActor);
-    if (movie === undefined) {
+  // Create a new actor
+  async createActor(newActor: ActorDbos): Promise<ActorDbos | null> {
+    const collection = db.getActorsCollection();
+    const result = await collection.actorsCollection.insertOne(newActor);
+    if (!result.insertedId) {
       return null;
     }
-    return newActor;
+    const actor = await collection.actorsCollection.findOne({ _id: result.insertedId });
+    return actor ? new ActorDbos(actor) : null;
   }
 
-  updateActor(id: number, updateActor: Actor): Actor | null {
-    var actor = actors.find((actor) => actor.id === id);
-    if (actor === undefined) {
+  // Update an actor by ID
+  async updateActor(id: string, updatedActor: ActorDbos): Promise<ActorDbos | null> {
+    const collection = db.getActorsCollection();
+    const result = await collection.actorsCollection.updateOne(
+      { _id: new ObjectId(id)},
+      { $set: updatedActor }
+    );
+    if (result.modifiedCount === 0) {
       return null;
     }
-    actor = updateActor ;
-    return actor;
+    const actor = await collection.actorsCollection.findOne({ _id: new ObjectId(id) });
+    return actor ? new ActorDbos(actor) : null;
   }
 
-  deleteActor(id: number): Actor | null {
-    const actor = actors.findIndex((actor) => actor.id === id);
-    if (actor === undefined) {
+  // Delete an actor by ID
+  async deleteActor(id: string): Promise<ActorDbos | null> {
+    const collection = db.getActorsCollection();
+    const result = await collection.actorsCollection.deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 0) {
       return null;
     }
-    return actors.splice(actor, 1)[0];
   }
 }
