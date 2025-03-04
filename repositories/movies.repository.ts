@@ -21,7 +21,7 @@ let movies: Movie[] = [
       {
         id: 1,
         name: "Daniel Radcliffe",
-        birthday: new Date("23/07/1989"),
+        birthday: "23/07/1989",
         country: "UK",
         age: 31,
       },
