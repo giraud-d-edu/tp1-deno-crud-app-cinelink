@@ -1,4 +1,7 @@
 import { rating } from "../models/ratings.models.ts";
+import { RatingService } from "../services/rating.services.ts";
+
+
 let ratings: rating[] = [
     {
     id: 1,
@@ -8,9 +11,17 @@ let ratings: rating[] = [
     },
 ];
 export class RatingRepository {
+    private toDBO(rate: RatingService.RatingDTO): RatingDBO {
+        return {
+            id: rate.id,
+            rating: rate.rating,
+            comment: rate.comment,
+            movieId: rate.movieId,
+        };
+    }
 
     getAllRatings(): rating[] {
-        return ratings;
+        return ratings.map(toDBO);
     };
 
     getRatingById(id: number): rating | null {
